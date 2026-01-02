@@ -62,7 +62,7 @@ AuthClient auth = new AuthClient(config);
 
 ---
 
-## 🛡 Core Functionalities
+##  Core Functionalities
 
 ### Authentication Flow
 ```java

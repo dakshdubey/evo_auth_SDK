@@ -1,7 +1,6 @@
 package com.evoauth.demo;
 
 import com.evoauth.core.AuthClient;
-import com.evoauth.models.LoginRequest;
 import com.evoauth.models.MfaResponse;
 import com.evoauth.models.User;
 import org.springframework.web.bind.annotation.*;

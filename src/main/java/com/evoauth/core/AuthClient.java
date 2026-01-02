@@ -166,6 +166,7 @@ public class AuthClient {
         // We'll reuse a generic Map or DTO here. Let's create an inner class or use
         // Map.
         class CodeRequest {
+            @SuppressWarnings("unused")
             public String code;
 
             public CodeRequest(String c) {
