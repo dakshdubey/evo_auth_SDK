@@ -1,7 +1,7 @@
 # EvoAuth 
 
 [![Build Status](https://github.com/dakshdubey/evo-auth-sdk/actions/workflows/publish.yml/badge.svg)](https://github.com/dakshdubey/evo-auth-sdk/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 **EvoAuth** is a premium Java SDK for modern authentication. It handles the "boring" stuff (JWTs, Refresh Tokens, 2FA, OAuth2) so you can build your product faster.
 

@@ -56,7 +56,7 @@ public class DemoApplication {
             }
         });
         mockAuthServer.start(9090);
-        System.out.println("🚀 Mock Auth Server started on port 9090");
+        System.out.println(" Mock Auth Server started on port 9090");
     }
 
     @PreDestroy
