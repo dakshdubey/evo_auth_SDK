@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EvoAuth SDK Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent),
+                              radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.15), transparent);
+            color: white;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 { margin-bottom: 0.5rem; font-weight: 600; text-align: center; }
+        p.subtitle { color: #94a3b8; text-align: center; margin-bottom: 2rem; font-size: 0.9rem; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: #cbd5e1; }
+        
+        input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+
+        button:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+
+        #profile-section { display: none; text-align: center; }
+        .user-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        #mfa-qr { margin-top: 1.5rem; display: none; }
+        #mfa-qr img { border-radius: 12px; border: 4px solid white; }
+
+        .status-msg { margin-top: 1rem; font-size: 0.85rem; text-align: center; }
+        .error { color: #ef4444; }
+        .success { color: #22c55e; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="login-section">
+        <h1>EvoAuth SDK</h1>
+        <p class="subtitle">Experience Enterprise-Grade Security</p>
+        
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" value="demo@evoauth.com">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" value="password123">
+        </div>
+        
+        <button onclick="login()">Sign In</button>
+        <div id="login-msg" class="status-msg"></div>
+    </div>
+
+    <div id="profile-section">
+        <h1>Welcome Back!</h1>
+        <p class="subtitle" id="user-welcome"></p>
+        
+        <div class="user-card">
+            <div id="roles-container"></div>
+            <p style="margin: 1rem 0 0; font-size: 0.9rem; color: #94a3b8;" id="user-email"></p>
+        </div>
+
+        <button onclick="enableMFA()" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border)">Enable 2FA</button>
+        <button onclick="logout()" style="background: transparent; color: #ef4444;">Logout</button>
+
+        <div id="mfa-qr">
+            <p style="font-size: 0.9rem; margin-bottom: 1rem;">Scan this QR with Google Authenticator</p>
+            <img id="qr-img" src="" alt="MFA QR Code">
+        </div>
+        
+        <div id="profile-msg" class="status-msg"></div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = '/api/demo';
+
+    async function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const msg = document.getElementById('login-msg');
+
+        msg.textContent = 'Authenticating...';
+        msg.className = 'status-msg';
+
+        try {
+            const res = await fetch(`${API_BASE}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showProfile(data.user);
+            } else {
+                msg.textContent = data.message || 'Login failed';
+                msg.className = 'status-msg error';
+            }
+        } catch (e) {
+            msg.textContent = 'Connection error';
+            msg.className = 'status-msg error';
+        }
+    }
+
+    function showProfile(user) {
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('profile-section').style.display = 'block';
+        
+        document.getElementById('user-welcome').textContent = `${user.firstName} ${user.lastName}`;
+        document.getElementById('user-email').textContent = user.email;
+        
+        const rolesContainer = document.getElementById('roles-container');
+        rolesContainer.innerHTML = '';
+        user.roles.forEach(role => {
+            const span = document.createElement('span');
+            span.className = 'role-badge';
+            span.textContent = role;
+            rolesContainer.appendChild(span);
+        });
+    }
+
+    async function enableMFA() {
+        const msg = document.getElementById('profile-msg');
+        try {
+            const res = await fetch(`${API_BASE}/2fa/enable`, { method: 'POST' });
+            const data = await res.json();
+            
+            if (data.success) {
+                const qrSection = document.getElementById('mfa-qr');
+                const qrImg = document.getElementById('qr-img');
+                qrImg.src = data.mfa.qrCodeUrl;
+                qrSection.style.display = 'block';
+                msg.textContent = '2FA Enrollment Initialized';
+                msg.className = 'status-msg success';
+            } else {
+                msg.textContent = data.message;
+                msg.className = 'status-msg error';
+            }
+        } catch (e) {
+            msg.textContent = 'Error initiating 2FA';
+            msg.className = 'status-msg error';
+        }
+    }
+
+    async function logout() {
+        await fetch(`${API_BASE}/logout`, { method: 'POST' });
+        location.reload();
+    }
+</script>
+
+</body>
+</html>
