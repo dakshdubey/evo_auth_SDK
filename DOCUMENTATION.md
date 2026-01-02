@@ -41,13 +41,21 @@ Add this to your `pom.xml`:
 
 ```xml
 <dependency>
-    <groupId>com.evoauth</groupId>
+    <groupId>io.github.dakshdubey</groupId>
     <artifactId>evo-auth-sdk</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.6</version>
 </dependency>
 ```
 
-### 3. Basic Configuration
+### 3. Basic Configuration & Setup
+To use the SDK, first import the required classes:
+
+```java
+import com.evoauth.core.AuthClient;
+import com.evoauth.core.AuthConfig;
+import com.evoauth.models.User;
+```
+
 Initialize the `AuthClient` using the fluent Builder pattern:
 
 ```java

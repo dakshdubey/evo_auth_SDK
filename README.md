@@ -13,9 +13,11 @@
 -  **Social Login**: Built-in OAuth2 triggers for Google, GitHub, and more.
 -  **Spring Boot Native**: Auto-configuration out of the box.
 
-##  Installation
+## 🚀 Installation
 
-### Maven Central
+### Option 1: Maven Central (Recommended)
+Add this to your project's `pom.xml`:
+
 ```xml
 <dependency>
     <groupId>io.github.dakshdubey</groupId>
@@ -24,7 +26,7 @@
 </dependency>
 ```
 
-### JitPack (Immediate Use)
+### Option 2: JitPack (Latest Version)
 If you want to use the latest version directly from GitHub:
 
 1. Add the repository to your `pom.xml`:
@@ -42,20 +44,45 @@ If you want to use the latest version directly from GitHub:
 <dependency>
     <groupId>com.github.dakshdubey</groupId>
     <artifactId>evo-auth-sdk</artifactId>
-    <version>v1.0.0</version>
+    <version>v1.0.6</version> 
 </dependency>
 ```
 
-##  Quick Start
+## 🛠️ Quick Setup & Usage
+
+To use EvoAuth in your Java project, follow these simple steps:
+
+### 1. Import the SDK
+Just like you import `java.util.Scanner`, you need to import the EvoAuth components:
 
 ```java
-AuthClient auth = new AuthClient(new AuthConfig.Builder()
-    .baseUrl("https://api.evoauth.com")
-    .apiKey("your-key")
-    .build());
+import com.evoauth.core.AuthClient;
+import com.evoauth.core.AuthConfig;
+import com.evoauth.models.User;
+```
 
-User user = auth.login("user@example.com", "password");
-System.out.println("Welcome, " + user.getFirstName());
+### 2. Initialize and Login
+```java
+public class MyApp {
+    public static void main(String[] args) {
+        // 1. Setup Configuration
+        AuthConfig config = new AuthConfig.Builder()
+            .baseUrl("https://api.evoauth.com")
+            .apiKey("your-api-key-here")
+            .build();
+
+        // 2. Create the Client
+        AuthClient auth = new AuthClient(config);
+
+        // 3. User Login
+        try {
+            User user = auth.login("john@example.com", "password123");
+            System.out.println("Login Success! Welcome " + user.getFirstName());
+        } catch (Exception e) {
+            System.err.println("Login failed: " + e.getMessage());
+        }
+    }
+}
 ```
 
 ##  Documentation

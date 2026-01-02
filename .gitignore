@@ -1,6 +1,10 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/resources/static/index.html
+publish-settings.xml
+build-dist/
+dist/
+commit/
 
 ### STS ###
 .apt_generated
